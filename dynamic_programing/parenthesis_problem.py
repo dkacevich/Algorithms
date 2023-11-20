@@ -59,7 +59,6 @@ def calculate_max_expression(expression):
 
 
 
-# Тестовий приклад
 expression = "10-5*2+2"
 max_value = calculate_max_expression(expression)
 print(max_value)

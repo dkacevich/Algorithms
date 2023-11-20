@@ -3,25 +3,11 @@ from PIL import Image
 
 
 def simple_xor_encrypt_decrypt(text, key):
-    """
-    Шифрує або дешифрує текст за допомогою простого XOR-шифрування.
-
-    :param text: str, текст для шифрування або дешифрування.
-    :param key: int, ключ для XOR-шифрування.
-    :return: str, шифрований або дешифрований текст.
-    """
     extended_key = (key * (len(text) // len(key) + 1))[:len(text)]
     return ''.join(chr(ord(char) ^ ord(key_char)) for char, key_char in zip(text, extended_key))
 
 
 def encode_text_in_image_utf8(image, text):
-    """
-    Вбудовує текст у зображення, змінюючи найменш значущі біти (з урахуванням UTF-8).
-
-    :param image: PIL Image object, зображення для вбудовування тексту.
-    :param text: str, текст для вбудовування.
-    :return: PIL Image object, зображення з вбудованим текстом.
-    """
     
     # Конвертуємо текст у двійковий формат з урахуванням UTF-8
     binary_text = ''.join([format(byte, '08b') for byte in text.encode('utf-8')])
@@ -47,12 +33,7 @@ def encode_text_in_image_utf8(image, text):
     return encoded_image
 
 def decode_text_from_image_utf8(image):
-    """
-    Вилучає текст з зображення, читаючи найменш значущі біти пікселів (з урахуванням UTF-8).
-
-    :param image: PIL Image object, зображення з вбудованим текстом.
-    :return: str, вилучений текст.
-    """
+    
     # Отримуємо дані зображення
     pixels = np.array(image)
     flat_pixels = pixels.flatten()
@@ -73,11 +54,11 @@ def decode_text_from_image_utf8(image):
 
     return decoded_text
 
-# Приклад використання
-original_image = Image.open('encoding/white_noise_image.png')  # Замініть на шлях до вашого зображення
-text_to_encode = "Привет, как дела? Вот мой пароль: СОВЕРШЕННО СЕКРЕТНО"
-key = "hekjfsfiskjfjsidfj"
 
+original_image = Image.open('encoding/white_noise_image.png')
+
+key = "Secret_KEY"
+text_to_encode = input("Text: ")
 
 encrypted_text = simple_xor_encrypt_decrypt(text_to_encode, key)
 

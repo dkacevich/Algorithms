@@ -55,7 +55,6 @@ class FanoCoding:
 
         return decoded_text
 
-# Test Fano Coding
 fano_coding = FanoCoding()
 
 text = input("Text: ")
