@@ -1,64 +1,65 @@
-import operator
+def parse_expression(expression):
+    """
+    Parse the expression into numbers and operators.
+    """
+    numbers = []
+    operations = []
+    number = ''
+    
+    for char in expression:
+        if char in '+-*/':
+            numbers.append(float(number))
+            operations.append(char)
+            number = ''
+        else:
+            number += char
+    numbers.append(float(number))
+    
+    return numbers, operations
 
+def calculate(a, b, op):
+    """
+    Perform a calculation based on the operator.
+    """
+    if op == '+': return a + b
+    if op == '-': return a - b
+    if op == '*': return a * b
+    if op == '/': return a / b
 
-def calculate_max_expression(expression):
-    # Функція для розбиття виразу на числа і оператори
-    def split_expression(expr):
-        numbers, operations = [], []
-        current_number = ''
-        for char in expr:
-            if char in '+-*':
-                numbers.append(int(current_number))
-                current_number = ''
-                operations.append(char)
-            else:
-                current_number += char
-        numbers.append(int(current_number))
-        return numbers, operations
+def max_value_expression(expression):
+    """
+    Determine the arrangement of parentheses that maximizes the expression value.
+    """
+    numbers, operations = parse_expression(expression)
 
-    # Функція для визначення результату операції
-    def apply_operation(op, a, b):
-        if op == '+': return a + b
-        elif op == '-': return a - b
-        elif op == '*': return a * b
-
-    # Розбиваємо вираз на числа і оператори
-    numbers, operations = split_expression(expression)
-
-    # Кількість чисел у виразі
+    # Initialize DP tables
     n = len(numbers)
+    max_dp = [[0 for _ in range(n)] for _ in range(n)]
+    min_dp = [[0 for _ in range(n)] for _ in range(n)]
 
-    # Ініціалізація таблиць для зберігання мінімальних і максимальних значень
-    min_val = [[0] * n for _ in range(n)]
-    max_val = [[0] * n for _ in range(n)]
-
-    # Заповнення діагоналі матриць, оскільки мінімум і максимум одного числа - це саме число
+    # Base case
     for i in range(n):
-        min_val[i][i] = max_val[i][i] = numbers[i]
-        
-    # Обрахунок мінімуму і максимуму для всіх підрядків
-    for s in range(1, n):
-        for i in range(n - s):
-            j = i + s
-            min_val[i][j] = float('inf')
-            max_val[i][j] = float('-inf')
+        max_dp[i][i] = min_dp[i][i] = numbers[i]
+
+    # Fill DP tables
+    for l in range(2, n + 1):
+        for i in range(n - l + 1):
+            j = i + l - 1
+            max_dp[i][j] = float('-inf')
+            min_dp[i][j] = float('inf')
+
             for k in range(i, j):
-                min_temp = apply_operation(operations[k], min_val[i][k], min_val[k + 1][j])
-                max_temp = apply_operation(operations[k], max_val[i][k], max_val[k + 1][j])
+                max_val = calculate(max_dp[i][k], max_dp[k + 1][j], operations[k])
+                min_val = calculate(min_dp[i][k], min_dp[k + 1][j], operations[k])
 
-                min_val[i][j] = min(min_val[i][j], min_temp, max_temp)
-                max_val[i][j] = max(max_val[i][j], min_temp, max_temp)
+                max_dp[i][j] = max(max_dp[i][j], max_val, calculate(min_dp[i][k], max_dp[k + 1][j], operations[k]))
+                min_dp[i][j] = min(min_dp[i][j], min_val, calculate(max_dp[i][k], min_dp[k + 1][j], operations[k]))
 
-   
-   
-    # Повернення найбільшого числа
-    return max_val[0][n - 1]
+    return max_dp[0][n - 1]
 
 
 
 
-
-
-expression = "10-5*2+2"
-max_value = calculate_max_expression(expression)
-print(max_value)
+expression = "1-5+3*2-6+3"
+max_value = max_value_expression(expression)
+print(f"Max value for the expression '{expression}': {max_value}")

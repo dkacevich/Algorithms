@@ -55,7 +55,7 @@ def decode_text_from_image_utf8(image):
     return decoded_text
 
 
-original_image = Image.open('encoding/white_noise_image.png')
+original_image = Image.open('encoding/image.png')
 
 key = "Secret_KEY"
 text_to_encode = input("Text: ")
@@ -63,6 +63,9 @@ text_to_encode = input("Text: ")
 encrypted_text = simple_xor_encrypt_decrypt(text_to_encode, key)
 
 encoded_image = encode_text_in_image_utf8(original_image, encrypted_text)
+
+encoded_image.save('i.png')
+
 decoded_text = decode_text_from_image_utf8(encoded_image)
 
 print("Вилучений текст:", simple_xor_encrypt_decrypt(decoded_text, key))

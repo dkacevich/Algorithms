@@ -1,49 +1,21 @@
-def unbounded_knapsack(W, n, val, wt):
+def unbounded_knapsack_with_items(max_weight, weights, values):
+    n = len(values)
+    dp = [0 for _ in range(max_weight + 1)]
+    items_selected = [[] for _ in range(max_weight + 1)]
 
-    # ініціалізація dp
-    # масив, який зберігає максимальне значення,
-    # яке можна отримати для кожної вмістимості рюкзака від 0 до W
-    dp = [0 for i in range(W + 1)]
-    
-    
-    # масив, який зберігає індекс предмета,
-    # який був взятий останнім для кожної вмістимості рюкзака
-    item_count = [0 for i in range(W + 1)]
+    for w in range(1, max_weight + 1):
+        for i in range(n):
+            if weights[i] <= w and dp[w] < dp[w - weights[i]] + values[i]:
+                dp[w] = dp[w - weights[i]] + values[i]
+                items_selected[w] = items_selected[w - weights[i]] + [i]
 
-    # Для кожної вмістимості рюкзака від 0 до W, ми перевіряємо кожен предмет
-    for i in range(W + 1):
-        for j in range(n):
-            
-            # Якщо вага предмета менша або дорівнює вмістимості рюкзака
-            if (wt[j] <= i) and (dp[i - wt[j]] + val[j] > dp[i]):
-                
-                # оновлюємо dp[i] максимальним значенням між поточним значенням dp[i] та сумою значення предмета та dp[i - wt[j]]
-                dp[i] = dp[i - wt[j]] + val[j]
-                item_count[i] = j
+    return dp[max_weight], [weights[i] for i in items_selected[max_weight]]
 
 
-    # Ініціалізація масиву нулями
-    items_taken = [0]*n
-    i = W
-    
-    # Потім ми починаємо з вмістимості рюкзака W і відстежуємо назад,
-    # використовуючи масив item_count, щоб знайти, які предмети були взяті.
-    while i > 0:
-        
-        # Кожен раз, коли ми знаходимо предмет,
-        # ми зменшуємо вмістимість рюкзака на вагу цього предмета 
-        # і збільшуємо відповідний елемент в items_taken
-        j = item_count[i]
-        items_taken[j] += 1
-        i -= wt[j]
+values = [60, 100, 120]  # Цінності предметів
+weights = [15, 17, 18]   # Ваги предметів
+max_weight = 70        # Максимальна вага рюкзака
 
-    return dp[W], items_taken
-
-# Тестові дані
-val = [10, 30, 20] # значення предметів
-wt = [5, 10, 15] # вага предметів
-W = 105 # вмістимість рюкзака
-
-n = len(val)
-
-print(unbounded_knapsack(W, n, val, wt))
+max_value, items = unbounded_knapsack_with_items(max_weight, weights, values)
+print("Максимальна цінність:", max_value)
+print("Предмети у рюкзаку:", items)
